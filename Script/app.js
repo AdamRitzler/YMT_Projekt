@@ -32,7 +32,6 @@ async function fetchFromTMDB(path) {
     const response = await fetch(`https://api.themoviedb.org/3${path}`, TMDBoptions);
     if (!response.ok) throw new Error(`TMDB svarade ${response.status}`);
     const data = await response.json();
-    console.log(data.results);
     return data.results;
   } catch (err) {
     console.error(err);
@@ -53,33 +52,115 @@ function toTitle(item, type) {
   };
 }
 
+function renderTitleSection(titleList, headingText, items, type) {
+  const section = document.createElement("li");
+  section.classList.add("title-section");
+
+  const header = document.createElement("div");
+  header.classList.add("carousel-header");
+
+  const heading = document.createElement("h2");
+  heading.classList.add("section-heading");
+  heading.textContent = headingText;
+  header.append(heading);
+
+  const carousel = document.createElement("ul");
+  carousel.classList.add("title-carousel");
+  carousel.setAttribute("aria-label", headingText.replace(":", ""));
+
+  for (const item of items ?? []) {
+    carousel.append(createTitleCard(toTitle(item, type)));
+  }
+
+  const previousButton = createCarouselButton("Föregående titlar", "‹");
+  const nextButton = createCarouselButton("Nästa titlar", "›");
+  previousButton.addEventListener("click", () => {
+    carousel.scrollBy({ left: -carousel.clientWidth, behavior: "smooth" });
+  });
+  nextButton.addEventListener("click", () => {
+    carousel.scrollBy({ left: carousel.clientWidth, behavior: "smooth" });
+  });
+
+  const controls = document.createElement("div");
+  controls.classList.add("carousel-controls");
+  controls.append(previousButton, nextButton);
+  header.append(controls);
+
+  section.append(header, carousel);
+  titleList.append(section);
+  carousel.addEventListener("scroll", () => updateCarouselButtons(carousel));
+  updateCarouselButtons(carousel);
+}
+
+function updateCarouselButtons(carousel) {
+  const [previousButton, nextButton] = carousel.parentElement.querySelectorAll(".carousel-button");
+  previousButton.disabled = carousel.scrollLeft <= 0;
+  nextButton.disabled =
+    carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 1;
+}
+
+function createCarouselButton(label, text) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.classList.add("carousel-button");
+  button.setAttribute("aria-label", label);
+  button.textContent = text;
+  return button;
+}
+
+window.addEventListener("resize", () => {
+  document.querySelectorAll(".title-carousel").forEach(updateCarouselButtons);
+});
+
+function createTitleCard(title) {
+  const card = document.createElement("li");
+  card.classList.add("title-card");
+  card.setAttribute("role", "button");
+  card.tabIndex = 0;
+  card.addEventListener("click", () => handleTitleCardClick(title));
+  card.addEventListener("keydown", event => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleTitleCardClick(title);
+    }
+  });
+
+  if (title.posterPath) {
+    const poster = document.createElement("img");
+    poster.src = `https://image.tmdb.org/t/p/w342${title.posterPath}`;
+    poster.alt = `Poster för ${title.title}`;
+    card.append(poster);
+  }
+
+  const details = document.createElement("div");
+  details.classList.add("title-card-details");
+
+  const titleElement = document.createElement("h3");
+  titleElement.textContent = title.title;
+  details.append(titleElement);
+
+  const metadata = [title.year, title.type].filter(Boolean).join(" · ");
+  if (metadata) {
+    const metadataElement = document.createElement("p");
+    metadataElement.textContent = metadata;
+    details.append(metadataElement);
+  }
+
+  card.append(details);
+  return card;
+}
+
+function handleTitleCardClick(title) {
+  // Lägg kortets klickbeteende här.
+}
+
 async function renderPopularTitles() {
   const movieItem = await fetchFromTMDB('/movie/popular');
   const tvItem = await fetchFromTMDB('/tv/popular');
   const titleList = document.getElementById("title-list");
   titleList.replaceChildren();
 
-  const moviesHeading = document.createElement("li");
-  moviesHeading.classList.add("section-heading");
-  moviesHeading.textContent = "Movies:";
-  titleList.append(moviesHeading);
-
-  for (const item of movieItem ?? []) {
-    const title = toTitle(item, TYPES.MOVIE);
-    const listItem = document.createElement("li");
-    listItem.textContent = title.title;
-    titleList.append(listItem);
-  }
-
-  const seriesHeading = document.createElement("li");
-  seriesHeading.classList.add("section-heading");
-  seriesHeading.textContent = "Series:";
-  titleList.append(seriesHeading);
-
-  for (const item of tvItem ?? []) {
-    const title = toTitle(item, TYPES.TV_SHOW);
-    const listItem = document.createElement("li");
-    listItem.textContent = title.title;
-    titleList.append(listItem);
-  }
+  renderTitleSection(titleList, "Popular movies:", movieItem, TYPES.MOVIE);
+  renderTitleSection(titleList, "Popular series:", tvItem, TYPES.TV_SHOW);
 }
+renderPopularTitles();

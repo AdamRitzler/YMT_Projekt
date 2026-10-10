@@ -1,4 +1,97 @@
+#title-list {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.title-section {
+  margin-bottom: 2rem;
+}
+
+.carousel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
 .section-heading {
+  margin: 0 0 0.75rem;
   font-size: 1.5rem;
   font-weight: bold;
+}
+
+.carousel-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.carousel-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  background: white;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.carousel-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.title-carousel {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0.25rem;
+  overflow-x: auto;
+  list-style: none;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.title-card {
+  box-sizing: border-box;
+  flex: 0 0 calc((100% - 1.5rem) / 3);
+  min-width: 0;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  scroll-snap-align: start;
+}
+
+.title-card:focus-visible,
+.carousel-button:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.title-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 0.25rem;
+}
+
+.title-card-details {
+  padding-top: 0.5rem;
+  overflow-wrap: anywhere;
+}
+
+.title-card-details h3,
+.title-card-details p {
+  margin: 0 0 0.5rem;
+}
+
+@media (min-width: 700px) {
+  .title-card {
+    flex-basis: calc((100% - 3rem) / 5);
+  }
 }
