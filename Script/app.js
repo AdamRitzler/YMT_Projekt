@@ -152,6 +152,17 @@ function createTitleCard(title) {
 
 function handleTitleCardClick(title) {
   // Lägg kortets klickbeteende här.
+   /*
+ on klick öppna detaljsidan för titeln. 
+ ska innehålla mer information om titeln, som beskrivning, betyg, skådespelare, etc. och eventuellt länkar till var man kan titta på den.
+Knapp för att lägga till titeln i användarens lista över titlar, och att välja status (t.ex. "Plan to watch", "Watching", "Watched") och kunna ta bort.
+  */
+}
+
+function showView(viewId) {
+  document.querySelectorAll(".view").forEach(view => {
+    view.classList.toggle("hidden", view.id !== viewId);
+  });
 }
 
 async function renderPopularTitles() {

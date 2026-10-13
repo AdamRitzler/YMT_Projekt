@@ -95,3 +95,5 @@
     flex-basis: calc((100% - 3rem) / 5);
   }
 }
+
+.hidden { display: none; }
