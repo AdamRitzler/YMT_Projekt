@@ -19,14 +19,6 @@ const TYPES = {
   ANIME: 'Anime',
 };
 
-const titles = [
-  { id: 1, title: 'Inception', type: TYPES.MOVIE, status: STATUSES.WATCHED },
-  { id: 2, title: 'Breaking Bad', type: TYPES.TV_SHOW, status: STATUSES.WATCHING },
-  { id: 3, title: 'Attack on Titan', type: TYPES.ANIME, status: STATUSES.PAUSED },
-  { id: 4, title: 'The Matrix', type: TYPES.MOVIE, status: STATUSES.PLAN_TO_WATCH },
-  { id: 5, title: 'Stranger Things', type: TYPES.TV_SHOW, status: STATUSES.WATCHED },
-];
-
 async function fetchFromTMDB(path) {
   try {
     const response = await fetch(`https://api.themoviedb.org/3${path}`, TMDBoptions);
@@ -125,9 +117,10 @@ function createTitleCard(title) {
     }
   });
 
-  if (title.posterPath) {
+  const posterPath = createTitlePoster(title);
+  if (posterPath) {
     const poster = document.createElement("img");
-    poster.src = `https://image.tmdb.org/t/p/w342${title.posterPath}`;
+    poster.src = posterPath;
     poster.alt = `Poster för ${title.title}`;
     card.append(poster);
   }
@@ -150,20 +143,46 @@ function createTitleCard(title) {
   return card;
 }
 
+function createTitlePoster(title) {
+  if (!title.posterPath) return null;
+  return `https://image.tmdb.org/t/p/w342${title.posterPath}`;
+}
+
 function handleTitleCardClick(title) {
+  showView("view-details");
+
+  const poster = document.getElementById("title-image");
+  const posterPath = createTitlePoster(title);
+  if (posterPath) {
+    poster.src = posterPath;
+    poster.alt = `Poster för ${title.title}`;
+    poster.hidden = false;
+  } else {
+    poster.removeAttribute("src");
+    poster.alt = "";
+    poster.hidden = true;
+  }
+
+  document.getElementById("title-name").textContent = title.title;
+
   // Lägg kortets klickbeteende här.
-   /*
- on klick öppna detaljsidan för titeln. 
- ska innehålla mer information om titeln, som beskrivning, betyg, skådespelare, etc. och eventuellt länkar till var man kan titta på den.
+  /*
+on klick öppna detaljsidan för titeln.
+ska innehålla mer information om titeln, som beskrivning, betyg, skådespelare, etc. och eventuellt länkar till var man kan titta på den.
 Knapp för att lägga till titeln i användarens lista över titlar, och att välja status (t.ex. "Plan to watch", "Watching", "Watched") och kunna ta bort.
-  */
+ */
 }
 
 function showView(viewId) {
   document.querySelectorAll(".view").forEach(view => {
     view.classList.toggle("hidden", view.id !== viewId);
   });
+
 }
+
+document.getElementById("back-button").addEventListener("click", () => {
+  showView("view-home");
+});
 
 async function renderPopularTitles() {
   const movieItem = await fetchFromTMDB('/movie/popular');
