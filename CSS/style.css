@@ -1,6 +1,73 @@
-#title-list {
+/* Färger och mått samlade på ett ställe (som konstanter i Java) */
+:root {
+  --bg: #0f1115;
+  --surface: #1a1d24;
+  --surface-hover: #242833;
+  --border: #2c313c;
+  --text: #f3f4f6;
+  --text-muted: #9ca3af;
+  --accent: #3b82f6;
+  --radius: 0.75rem;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.4;
+}
+
+/* Header / logga */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 0.75rem 1rem;
+  background: rgba(15, 17, 21, 0.85);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-family: Righteous, "Arial Black", sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+  background: linear-gradient(90deg, #60a5fa, var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Sidans innehåll */
+.page {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 1.25rem 1rem 2rem;
+}
+
+.page-heading {
+  margin: 0 0 1.25rem;
+  font-size: 1.75rem;
+}
+
+.status-message {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text-muted);
+}
+
+#title-list {
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -9,38 +76,45 @@
   margin-bottom: 2rem;
 }
 
+/* Karusell */
 .carousel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .section-heading {
-  margin: 0 0 0.75rem;
-  font-size: 1.5rem;
-  font-weight: bold;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .carousel-controls {
   display: flex;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
 }
 
 .carousel-button {
-  width: 2.5rem;
-  height: 2.5rem;
-  border: 1px solid #ccc;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--border);
   border-radius: 50%;
-  background: white;
-  font-size: 1.5rem;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1.4rem;
   line-height: 1;
   cursor: pointer;
+  transition: background 0.15s;
+}
+
+.carousel-button:hover:not(:disabled) {
+  background: var(--surface-hover);
 }
 
 .carousel-button:disabled {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: default;
 }
 
@@ -48,27 +122,34 @@
   display: flex;
   gap: 0.75rem;
   margin: 0;
-  padding: 0.25rem;
+  padding: 0.25rem 0.25rem 0.75rem;
   overflow-x: auto;
   list-style: none;
   scroll-snap-type: x mandatory;
   scrollbar-width: thin;
 }
 
+/* Kort */
 .title-card {
-  box-sizing: border-box;
   flex: 0 0 calc((100% - 1.5rem) / 3);
   min-width: 0;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 0.5rem;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--surface);
   cursor: pointer;
   scroll-snap-align: start;
+  transition: transform 0.15s, background 0.15s;
+}
+
+.title-card:hover {
+  transform: translateY(-3px);
+  background: var(--surface-hover);
 }
 
 .title-card:focus-visible,
-.carousel-button:focus-visible {
-  outline: 3px solid #2563eb;
+.carousel-button:focus-visible,
+.back-button:focus-visible {
+  outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -77,17 +158,29 @@
   width: 100%;
   aspect-ratio: 2 / 3;
   object-fit: cover;
-  border-radius: 0.25rem;
 }
 
 .title-card-details {
-  padding-top: 0.5rem;
+  padding: 0.5rem 0.6rem 0.6rem;
   overflow-wrap: anywhere;
 }
 
-.title-card-details h3,
+.title-card-details h3 {
+  margin: 0 0 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  /* Max två rader, sedan "…" */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .title-card-details p {
-  margin: 0 0 0.5rem;
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
 
 @media (min-width: 700px) {
@@ -96,4 +189,34 @@
   }
 }
 
-.hidden { display: none; }
+/* Detaljvy */
+.back-button {
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background: var(--surface-hover);
+}
+
+#title-image {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  border-radius: var(--radius);
+}
+
+#title-name {
+  margin: 1rem 0;
+  font-size: 1.5rem;
+}
+
+.hidden {
+  display: none;
+}

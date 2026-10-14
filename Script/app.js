@@ -201,8 +201,8 @@ async function renderPopularTitles() {
   const titleList = document.getElementById("title-list");
   titleList.replaceChildren();
 
-  if (movieItem) renderTitleSection(titleList, "Popular movies:", movieItem, TYPES.MOVIE);
-  if (tvItem) renderTitleSection(titleList, "Popular series:", tvItem, TYPES.TV_SHOW);
+  if (movieItem) renderTitleSection(titleList, "Movies:", movieItem, TYPES.MOVIE);
+  if (tvItem) renderTitleSection(titleList, "Series:", tvItem, TYPES.TV_SHOW);
 
   if (!movieItem && !tvItem) {
     showStatusMessage("Could not load titles. Please try again later.");

@@ -5,24 +5,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>YMT - Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Righteous&display=swap">
   <link rel="stylesheet" href="../CSS/style.css">
 </head>
 
 <body>
+  <header class="site-header">
+    <div class="logo">Your Movie Tracker</div>
+  </header>
 
+  <main class="page">
+    <section id="view-home" class="view">
+      <h1 class="page-heading">Populärt just nu</h1>
+      <p id="status-message" class="status-message" role="status" hidden></p>
+      <ul id="title-list"></ul>
+    </section>
 
-  <section id="view-home" class="view">
-    <h1>YMT - Home</h1>
-    <p id="status-message" role="status" hidden></p>
-    <ul id="title-list"></ul>
-  </section>
-
-  <section id="view-details" class="view hidden">
-    <img id="title-image" alt="Title Image">
-    <h2 id="title-name"></h2>
-    <button id="back-button">Back</button>
-  </section>
-
+    <section id="view-details" class="view hidden">
+      <button id="back-button" class="back-button">‹ Back</button>
+      <img id="title-image" alt="Title Image">
+      <h2 id="title-name"></h2>
+    </section>
+  </main>
 
   <script src="../Script/config.js"></script>
   <script src="../Script/app.js"></script>
