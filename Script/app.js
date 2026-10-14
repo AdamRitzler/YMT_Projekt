@@ -2,7 +2,8 @@ const TMDBoptions = {
   method: 'GET',
   headers: {
     accept: 'application/json',
-    Authorization: `Bearer ${TMDB_API_KEY}`
+    // typeof-kontrollen gör att appen inte kraschar om config.js saknas
+    Authorization: `Bearer ${typeof TMDB_API_KEY !== 'undefined' ? TMDB_API_KEY : ''}`
   }
 };
 
@@ -184,13 +185,31 @@ document.getElementById("back-button").addEventListener("click", () => {
   showView("view-home");
 });
 
+function showStatusMessage(text) {
+  const statusMessage = document.getElementById("status-message");
+  statusMessage.textContent = text;
+  statusMessage.hidden = !text;
+}
+
 async function renderPopularTitles() {
-  const movieItem = await fetchFromTMDB('/movie/popular');
-  const tvItem = await fetchFromTMDB('/tv/popular');
+  showStatusMessage("Loading titles…");
+
+  const [movieItem, tvItem] = await Promise.all([
+    fetchFromTMDB('/movie/popular'),
+    fetchFromTMDB('/tv/popular'),
+  ]);
   const titleList = document.getElementById("title-list");
   titleList.replaceChildren();
 
-  renderTitleSection(titleList, "Popular movies:", movieItem, TYPES.MOVIE);
-  renderTitleSection(titleList, "Popular series:", tvItem, TYPES.TV_SHOW);
+  if (movieItem) renderTitleSection(titleList, "Popular movies:", movieItem, TYPES.MOVIE);
+  if (tvItem) renderTitleSection(titleList, "Popular series:", tvItem, TYPES.TV_SHOW);
+
+  if (!movieItem && !tvItem) {
+    showStatusMessage("Could not load titles. Please try again later.");
+  } else if (!movieItem || !tvItem) {
+    showStatusMessage("Some titles could not be loaded.");
+  } else {
+    showStatusMessage("");
+  }
 }
 renderPopularTitles();
