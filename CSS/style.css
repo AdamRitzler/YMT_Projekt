@@ -9,6 +9,8 @@
   --accent: #3b82f6;
   --radius: 0.75rem;
   color-scheme: dark;
+  /* Reservera alltid plats för scrollbaren så att sidan inte hoppar i sidled när vyn byts */
+  scrollbar-gutter: stable;
 }
 
 *,
