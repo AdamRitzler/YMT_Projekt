@@ -158,7 +158,7 @@ function createTitlePoster(title) {
 
 async function handleTitleCardClick(title) {
   showView("view-details");
-
+ 
   const poster = document.getElementById("title-image");
   const posterPath = createTitlePoster(title);
   if (posterPath) {
@@ -170,17 +170,18 @@ async function handleTitleCardClick(title) {
     poster.alt = "";
     poster.hidden = true;
   }
-
   document.getElementById("title-name").textContent = title.title;
 
- const titleDetails = await getSpecificTitle(title.id, title.type);
+  const titleDetails = await getSpecificTitle(title.id, title.type);
 
-  // Lägg kortets klickbeteende här.
-  /*
-on klick öppna detaljsidan för titeln.
-ska innehålla mer information om titeln, som beskrivning, betyg, skådespelare, etc. och eventuellt länkar till var man kan titta på den.
-Knapp för att lägga till titeln i användarens lista över titlar, och att välja status (t.ex. "Plan to watch", "Watching", "Watched") och kunna ta bort.
- */
+  document.getElementById("title-description").textContent = titleDetails?.overview;
+  const genreList = document.getElementById("title-genres");
+  genreList.replaceChildren();
+  for (const genre of titleDetails?.genres ?? []) {
+    const genreItem = document.createElement("li");
+    genreItem.textContent = genre.name;
+    genreList.append(genreItem);
+  }
 }
 
 function showView(viewId) {
@@ -210,7 +211,7 @@ async function renderPopularTitles() {
 
   const movie = movieItem?.results;
   const serie = tvItem?.results;
-  
+
   const titleList = document.getElementById("title-list");
   titleList.replaceChildren();
 
