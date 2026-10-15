@@ -9,6 +9,8 @@
   --accent: #3b82f6;
   --radius: 0.75rem;
   color-scheme: dark;
+  /* Reservera alltid plats för scrollbaren så att sidan inte hoppar i sidled när vyn byts */
+  scrollbar-gutter: stable;
 }
 
 *,
@@ -205,16 +207,82 @@ body {
   background: var(--surface-hover);
 }
 
+/* Mobil: affisch överst, info under (en kolumn) */
+.details-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
 #title-image {
   display: block;
   width: 100%;
-  max-width: 300px;
+  max-width: 260px;
+  /* Reserverar plats medan bilden laddar, så att texten inte hoppar */
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
   border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* display: block ovan vinner annars över hidden-attributet */
+#title-image[hidden] {
+  display: none;
+}
+
+.details-info {
+  width: 100%;
 }
 
 #title-name {
-  margin: 1rem 0;
-  font-size: 1.5rem;
+  margin: 0 0 0.75rem;
+  font-size: 1.6rem;
+  line-height: 1.2;
+}
+
+#title-description {
+  max-width: 65ch;
+  margin: 0 0 1rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Genrer som små rundade rutor */
+.genre-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.genre-list li {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 0.85rem;
+}
+
+/* Dator: affisch till vänster, info till höger */
+@media (min-width: 700px) {
+  .details-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+
+  #title-image {
+    flex: 0 0 300px;
+    max-width: 300px;
+  }
+
+  #title-name {
+    font-size: 2.25rem;
+  }
 }
 
 .hidden {

@@ -25,11 +25,18 @@ async function fetchFromTMDB(path) {
     const response = await fetch(`https://api.themoviedb.org/3${path}`, TMDBoptions);
     if (!response.ok) throw new Error(`TMDB svarade ${response.status}`);
     const data = await response.json();
-    return data.results;
+    return data;
   } catch (err) {
     console.error(err);
     return null;
   }
+}
+
+async function getSpecificTitle(id, type) {
+  const path = type === TYPES.MOVIE ? `/movie/${id}` : `/tv/${id}`;
+  const titleDetails = await fetchFromTMDB(path);
+  console.log(titleDetails);
+  return titleDetails;
 }
 
 function toTitle(item, type) {
@@ -149,9 +156,9 @@ function createTitlePoster(title) {
   return `https://image.tmdb.org/t/p/w342${title.posterPath}`;
 }
 
-function handleTitleCardClick(title) {
+async function handleTitleCardClick(title) {
   showView("view-details");
-
+ 
   const poster = document.getElementById("title-image");
   const posterPath = createTitlePoster(title);
   if (posterPath) {
@@ -163,15 +170,18 @@ function handleTitleCardClick(title) {
     poster.alt = "";
     poster.hidden = true;
   }
-
   document.getElementById("title-name").textContent = title.title;
 
-  // Lägg kortets klickbeteende här.
-  /*
-on klick öppna detaljsidan för titeln.
-ska innehålla mer information om titeln, som beskrivning, betyg, skådespelare, etc. och eventuellt länkar till var man kan titta på den.
-Knapp för att lägga till titeln i användarens lista över titlar, och att välja status (t.ex. "Plan to watch", "Watching", "Watched") och kunna ta bort.
- */
+  const titleDetails = await getSpecificTitle(title.id, title.type);
+
+  document.getElementById("title-description").textContent = titleDetails?.overview;
+  const genreList = document.getElementById("title-genres");
+  genreList.replaceChildren();
+  for (const genre of titleDetails?.genres ?? []) {
+    const genreItem = document.createElement("li");
+    genreItem.textContent = genre.name;
+    genreList.append(genreItem);
+  }
 }
 
 function showView(viewId) {
@@ -198,11 +208,15 @@ async function renderPopularTitles() {
     fetchFromTMDB('/movie/popular'),
     fetchFromTMDB('/tv/popular'),
   ]);
+
+  const movie = movieItem?.results;
+  const serie = tvItem?.results;
+
   const titleList = document.getElementById("title-list");
   titleList.replaceChildren();
 
-  if (movieItem) renderTitleSection(titleList, "Movies:", movieItem, TYPES.MOVIE);
-  if (tvItem) renderTitleSection(titleList, "Series:", tvItem, TYPES.TV_SHOW);
+  if (movieItem) renderTitleSection(titleList, "Movies:", movie, TYPES.MOVIE);
+  if (tvItem) renderTitleSection(titleList, "Series:", serie, TYPES.TV_SHOW);
 
   if (!movieItem && !tvItem) {
     showStatusMessage("Could not load titles. Please try again later.");
