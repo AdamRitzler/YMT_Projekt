@@ -25,11 +25,18 @@ async function fetchFromTMDB(path) {
     const response = await fetch(`https://api.themoviedb.org/3${path}`, TMDBoptions);
     if (!response.ok) throw new Error(`TMDB svarade ${response.status}`);
     const data = await response.json();
-    return data.results;
+    return data;
   } catch (err) {
     console.error(err);
     return null;
   }
+}
+
+async function getSpecificTitle(id, type) {
+  const path = type === TYPES.MOVIE ? `/movie/${id}` : `/tv/${id}`;
+  const titleDetails = await fetchFromTMDB(path);
+  console.log(titleDetails);
+  return titleDetails;
 }
 
 function toTitle(item, type) {
@@ -149,7 +156,7 @@ function createTitlePoster(title) {
   return `https://image.tmdb.org/t/p/w342${title.posterPath}`;
 }
 
-function handleTitleCardClick(title) {
+async function handleTitleCardClick(title) {
   showView("view-details");
 
   const poster = document.getElementById("title-image");
@@ -165,6 +172,8 @@ function handleTitleCardClick(title) {
   }
 
   document.getElementById("title-name").textContent = title.title;
+
+ const titleDetails = await getSpecificTitle(title.id, title.type);
 
   // Lägg kortets klickbeteende här.
   /*
@@ -198,11 +207,15 @@ async function renderPopularTitles() {
     fetchFromTMDB('/movie/popular'),
     fetchFromTMDB('/tv/popular'),
   ]);
+
+  const movie = movieItem?.results;
+  const serie = tvItem?.results;
+  
   const titleList = document.getElementById("title-list");
   titleList.replaceChildren();
 
-  if (movieItem) renderTitleSection(titleList, "Movies:", movieItem, TYPES.MOVIE);
-  if (tvItem) renderTitleSection(titleList, "Series:", tvItem, TYPES.TV_SHOW);
+  if (movieItem) renderTitleSection(titleList, "Movies:", movie, TYPES.MOVIE);
+  if (tvItem) renderTitleSection(titleList, "Series:", serie, TYPES.TV_SHOW);
 
   if (!movieItem && !tvItem) {
     showStatusMessage("Could not load titles. Please try again later.");
